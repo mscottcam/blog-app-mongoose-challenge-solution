@@ -17,7 +17,7 @@ mongoose.Promise = global.Promise;
 
 const strategy = new BasicStrategy(
   (username, password, callback) => {
-    let usr; 
+    let usr;
     User
       .findOne({username})
       .exec()
@@ -94,8 +94,6 @@ app.post('/posts', authenticate, (req, res) => {
 });
 
 app.post('/users', (req, res) => {
-  passport.authenticate('basic', {session: false}),
-  (req, res) => res.json({user: req.user.apiRepr()})
   const requiredFields = ['username', 'password'];
   let {username, password, firstName, lastName} = req.body;
   return User
@@ -123,14 +121,9 @@ app.post('/users', (req, res) => {
     .then(user => {
       return res.status(201).json(user.apiRepr());
     })
-
-
-
 })
 
-app.delete('/posts/:id', (req, res) => {
-  passport.authenticate('basic', {session: false}),
-  (req, res) => res.json({user: req.user.apiRepr()})
+app.delete('/posts/:id', authenticate, (req, res) => {
   BlogPost
     .findByIdAndRemove(req.params.id)
     .exec()
@@ -144,9 +137,10 @@ app.delete('/posts/:id', (req, res) => {
 });
 
 
-app.put('/posts/:id', (req, res) => {
-  passport.authenticate('basic', {session: false}),
-  (req, res) => res.json({user: req.user.apiRepr()})
+app.put('/posts/:id', authenticate, (req, res) => {
+  let id;
+  console.log(req.params.id);
+  console.log(req.body.id);
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
     res.status(400).json({
       error: 'Request path id and request body id values must match'
@@ -169,9 +163,7 @@ app.put('/posts/:id', (req, res) => {
 });
 
 
-app.delete('/:id', (req, res) => {
-  passport.authenticate('basic', {session: false}),
-  (req, res) => res.json({user: req.user.apiRepr()})
+app.delete('/:id', authenticate, (req, res) => {
   BlogPosts
     .findByIdAndRemove(req.params.id)
     .exec()
