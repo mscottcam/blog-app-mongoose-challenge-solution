@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 
 const {DATABASE_URL, PORT} = require('./config');
-const {BlogPost} = require('./models');
+const {BlogPost, User} = require('./models');
 
 const app = express();
 
@@ -48,7 +48,6 @@ app.post('/posts', (req, res) => {
       return res.status(400).send(message);
     }
   }
-
   BlogPost
     .create({
       title: req.body.title,
@@ -60,9 +59,40 @@ app.post('/posts', (req, res) => {
         console.error(err);
         res.status(500).json({error: 'Something went wrong'});
     });
-
 });
 
+app.post('/users', (req, res) => {
+  const requiredFields = ['username', 'password', 'firstName', 'lastName'];
+  let {username} = req.body;
+  return User
+    .find({username})
+    .count()
+    .exec()
+    .then(count => {
+      if (count > 0) {
+      return Promise.reject({
+        name: 'UserError',
+        message: 'username already in use'
+      });
+      }
+      return User.hashPassword(password)
+    })
+    .then(hash => {
+      return User
+        .create({
+          username: username,
+          password: hash,
+          firstName: firstName,
+          lastName: lastName
+        })
+    })
+    .then(user => {
+      return res.status(201).json(user.apiRepr());
+    })
+
+
+
+})
 
 app.delete('/posts/:id', (req, res) => {
   BlogPost
