@@ -59,4 +59,4 @@ userSchema.methods.apiRepr = function() {
 
 const BlogPost = mongoose.model('BlogPost', blogPostSchema);
 const User = mongoose.model('User', userSchema);
-module.exports = {BlogPost};
+module.exports = {BlogPost, User};

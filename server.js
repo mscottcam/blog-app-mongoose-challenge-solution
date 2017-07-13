@@ -62,8 +62,8 @@ app.post('/posts', (req, res) => {
 });
 
 app.post('/users', (req, res) => {
-  const requiredFields = ['username', 'password', 'firstName', 'lastName'];
-  let {username} = req.body;
+  const requiredFields = ['username', 'password'];
+  let {username, password, firstName, lastName} = req.body;
   return User
     .find({username})
     .count()
