@@ -138,15 +138,14 @@ app.delete('/posts/:id', authenticate, (req, res) => {
 
 
 app.put('/posts/:id', authenticate, (req, res) => {
-  let id;
   console.log(req.params.id);
-  console.log(req.body.id);
-  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+  console.log(req.body._id);
+  if (!(req.params.id === req.body.id)) {
     res.status(400).json({
       error: 'Request path id and request body id values must match'
     });
   }
-
+//req.params.id && req.body.id && (
   const updated = {};
   const updateableFields = ['title', 'content', 'author'];
   updateableFields.forEach(field => {
